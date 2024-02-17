@@ -1,8 +1,6 @@
 using BruteForce.Contracts;
 using BruteForce.Impl;
 using BruteForce.Models;
-using FluentAssertions;
-using Moq;
 
 namespace BruteForce.Tests
 {
