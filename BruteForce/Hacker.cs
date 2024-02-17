@@ -18,12 +18,7 @@ namespace BruteForce
             _sender = sender;
             _output = output;
 
-            _availableChars = Enumerable.Range(char.MinValue, char.MaxValue)
-                .Select(Convert.ToChar)
-                .Where(char.IsAscii)
-                .Where(char.IsLetterOrDigit)
-                .ToList()
-                .AsReadOnly();
+            _availableChars = Password.GetAvailableChars();
             _passwordBlocks = new int?[16];
             _passwordBlocks[0] = 0;
         }
