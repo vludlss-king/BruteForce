@@ -9,7 +9,7 @@ namespace BruteForce
     {
         private readonly ISender<TRequest, TResponse> _sender;
 
-        private readonly int?[] _charsIndexes;
+        private readonly int?[] _charsBlock;
         private readonly IReadOnlyList<char> _availableChars;
 
         public Hacker(ISender<TRequest, TResponse> sender)
@@ -22,13 +22,13 @@ namespace BruteForce
                 .Where(char.IsLetterOrDigit)
                 .ToList()
                 .AsReadOnly();
-            _charsIndexes = new int?[16];
-            _charsIndexes[0] = 0;
+            _charsBlock = new int?[16];
+            _charsBlock[0] = 0;
         }
 
         public TResponse Hack(TRequest request)
         {
-            int incrementableIndex = 0;
+            int cursor = 0;
             while (true)
             {
                 var password = GetNextPassword();
@@ -43,26 +43,26 @@ namespace BruteForce
                 else
                 {
                     Output.Write($"Пароль не найден {password}");
-                    Increment(ref incrementableIndex);
+                    Increment(ref cursor);
                 }
             }
         }
 
         private string GetNextPassword()
-            => _charsIndexes.Where(index => index is not null)
+            => _charsBlock.Where(index => index is not null)
                 .Select(index => Convert.ToString(_availableChars[index!.Value]))
                 .Aggregate((previous, next) => previous + next);
 
-        private void Increment(ref int index)
+        private void Increment(ref int cursor)
         {
-            _charsIndexes[index]++;
+            _charsBlock[cursor]++;
 
-            ResetPrevious(index);
+            ResetPrevious(cursor);
 
             bool allMax = true;
-            for (int current = index; current >= 0; current--)
+            for (int current = cursor; current >= 0; current--)
             {
-                if (_charsIndexes[current] < _availableChars.Count - 1)
+                if (_charsBlock[current] < _availableChars.Count - 1)
                 {
                     allMax = false;
                     break;
@@ -70,10 +70,10 @@ namespace BruteForce
             }
             if (allMax)
             {
-                index++;
-                _charsIndexes[index] = 0;
-                for (int i = index - 1; i >= 0; i--)
-                    _charsIndexes[i] = 0;
+                cursor++;
+                _charsBlock[cursor] = 0;
+                for (int i = cursor - 1; i >= 0; i--)
+                    _charsBlock[i] = 0;
             }
         }
 
@@ -82,11 +82,11 @@ namespace BruteForce
             var current = index;
             var previous = current - 1;
 
-            if (_charsIndexes[current] >= _availableChars.Count)
+            if (_charsBlock[current] >= _availableChars.Count)
             {
-                _charsIndexes[current] = 0;
+                _charsBlock[current] = 0;
 
-                _charsIndexes[previous]++;
+                _charsBlock[previous]++;
                 ResetPrevious(previous);
             }
         }
