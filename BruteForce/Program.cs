@@ -20,8 +20,6 @@ namespace BruteForce
                 var hacker = new Hacker<Request, Response>(new Sender(), new Output());
                 var request = new Request();
                 var result = hacker.Hack(request);
-
-                Console.ReadLine();
             }
         }
 
@@ -33,22 +31,13 @@ namespace BruteForce
                 Console.Write("Введите ваш пароль: ");
                 password = Console.ReadLine();
 
-                if (string.IsNullOrWhiteSpace(password))
-                {
-                    Console.WriteLine();
-                    Console.Write("Пароль пустой, введите ещё раз: ");
-                    continue;
-                }
-
                 if (!Helpers.Password.IsValid(password))
                 {
                     Console.WriteLine();
-                    Console.Write("Пароль имеет неверный формат, введите ещё раз");
+                    Console.WriteLine("Пароль имеет неверный формат, введите ещё раз");
                     continue;
                 }
-
-                if (!string.IsNullOrWhiteSpace(password) && Helpers.Password.IsValid(password))
-                    break;
+                else break;
             } while (true);
             return password;
         }

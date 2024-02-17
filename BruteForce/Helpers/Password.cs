@@ -11,8 +11,10 @@
 
         public static bool IsValid(string password)
         {
-            var chars = GetAvailableChars();
+            if (string.IsNullOrWhiteSpace(password))
+                return false;
 
+            var chars = GetAvailableChars();
             return password.All(@char => chars.Contains(@char));
         }
     }
