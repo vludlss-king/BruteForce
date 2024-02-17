@@ -24,4 +24,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BruteForce\BruteForce.csproj" />
+  </ItemGroup>
+
 </Project>
