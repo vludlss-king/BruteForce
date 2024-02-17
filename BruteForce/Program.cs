@@ -1,5 +1,4 @@
 ﻿using BruteForce.Impl;
-using Microsoft.Extensions.Logging;
 
 namespace BruteForce
 {
@@ -10,9 +9,7 @@ namespace BruteForce
         {
             Password = ReadPassword();
 
-            using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
-            ILogger<Hacker> logger = factory.CreateLogger<Hacker>();
-            var hacker = new Hacker(new Sender(), logger);
+            var hacker = new Hacker(new Sender());
             hacker.Hack();
 
             Console.ReadLine();

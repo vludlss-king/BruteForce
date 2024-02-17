@@ -1,21 +1,17 @@
 ﻿using BruteForce.Contracts;
-using Microsoft.Extensions.Logging;
-using System;
 
 namespace BruteForce
 {
     internal class Hacker
     {
         private readonly ISender _sender;
-        private readonly ILogger<Hacker> _logger;
 
         private readonly int?[] _charsIndexes;
         private readonly IReadOnlyList<char> _availableChars;
 
-        public Hacker(ISender sender, ILogger<Hacker> logger)
+        public Hacker(ISender sender)
         {
             _sender = sender;
-            _logger = logger;
 
             _availableChars = Enumerable.Range(char.MinValue, char.MaxValue)
                 .Select(Convert.ToChar)
