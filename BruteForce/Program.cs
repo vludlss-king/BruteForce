@@ -1,5 +1,10 @@
-﻿using BruteForce.Impl;
+﻿using BruteForce.Helpers;
+using BruteForce.Impl;
 using BruteForce.Models;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
+[assembly: InternalsVisibleTo("BruteForce.Tests")]
 
 namespace BruteForce
 {
@@ -12,7 +17,7 @@ namespace BruteForce
             {
                 Password = ReadPassword();
 
-                var hacker = new Hacker<Request, Response>(new Sender());
+                var hacker = new Hacker<Request, Response>(new Sender(), new Output());
                 var request = new Request();
                 var result = hacker.Hack(request);
 

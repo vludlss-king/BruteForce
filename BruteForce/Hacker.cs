@@ -5,16 +5,18 @@ namespace BruteForce
 {
     internal class Hacker<TRequest, TResponse>
         where TRequest : IPassword
-        where TResponse : ISuccess
+        where TResponse : ISuccess, IPassword
     {
         private readonly ISender<TRequest, TResponse> _sender;
+        private readonly IOutput _output;
 
         private readonly int?[] _passwordBlocks;
         private readonly IReadOnlyList<char> _availableChars;
 
-        public Hacker(ISender<TRequest, TResponse> sender)
+        public Hacker(ISender<TRequest, TResponse> sender, IOutput output)
         {
             _sender = sender;
+            _output = output;
 
             _availableChars = Enumerable.Range(char.MinValue, char.MaxValue)
                 .Select(Convert.ToChar)
@@ -26,23 +28,26 @@ namespace BruteForce
             _passwordBlocks[0] = 0;
         }
 
-        public TResponse Hack(TRequest request)
+        public TResponse Hack(TRequest request, CancellationToken token = default)
         {
             int blockCursor = 0;
             while (true)
             {
+                token.ThrowIfCancellationRequested();
+
                 var password = GetNextPassword();
 
                 request.Password = password;
                 var response = _sender.Send(request);
                 if(response.Success is true)
                 {
-                    Output.WriteLine($"Пароль найден {password}");
+                    _output.WriteLine($"Пароль найден {password}");
+                    response.Password = request.Password;
                     return response;
                 }
                 else
                 {
-                    Output.Write($"Пароль не найден {password}");
+                    _output.Write($"Пароль не найден {password}");
                     Increment(ref blockCursor);
                 }
             }
