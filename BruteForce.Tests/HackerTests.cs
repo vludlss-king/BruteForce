@@ -1,6 +1,6 @@
 namespace BruteForce.Tests
 {
-    public class UnitTest1
+    public class HackerTests
     {
         [Fact]
         public void Test1()
