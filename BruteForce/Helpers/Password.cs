@@ -5,8 +5,7 @@
         public static IReadOnlyList<char> GetAvailableChars()
             => Enumerable.Range(char.MinValue, char.MaxValue)
                 .Select(Convert.ToChar)
-                .Where(char.IsAscii)
-                .Where(char.IsLetterOrDigit)
+                .Where(char.IsAsciiLetterOrDigit)
                 .ToList()
                 .AsReadOnly();
     }
