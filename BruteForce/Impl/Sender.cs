@@ -1,15 +1,16 @@
 ﻿using BruteForce.Contracts;
+using BruteForce.Models;
 
 namespace BruteForce.Impl
 {
-    internal class Sender : ISender
+    internal class Sender : ISender<Request, Response>
     {
-        public bool Send(string password)
+        public Response Send(Request request)
         {
-            if (Program.Password == password)
-                return true;
-            else
-                return false;
+            if (Program.Password == request.Password)
+                return new() { Success = true };
+            
+            return new Response() { Success = false };
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BruteForce.Impl;
+using BruteForce.Models;
 
 namespace BruteForce
 {
@@ -7,12 +8,16 @@ namespace BruteForce
         public static string Password = string.Empty;
         static void Main(string[] args)
         {
-            Password = ReadPassword();
+            while (true)
+            {
+                Password = ReadPassword();
 
-            var hacker = new Hacker(new Sender());
-            hacker.Hack();
+                var hacker = new Hacker<Request, Response>(new Sender());
+                var request = new Request();
+                var result = hacker.Hack(request);
 
-            Console.ReadLine();
+                Console.ReadLine();
+            }
         }
 
         private static string ReadPassword()

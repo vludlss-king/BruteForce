@@ -2,14 +2,16 @@
 
 namespace BruteForce
 {
-    internal class Hacker
+    internal class Hacker<TRequest, TResponse>
+        where TRequest : IPassword
+        where TResponse : ISuccess
     {
-        private readonly ISender _sender;
+        private readonly ISender<TRequest, TResponse> _sender;
 
         private readonly int?[] _charsIndexes;
         private readonly IReadOnlyList<char> _availableChars;
 
-        public Hacker(ISender sender)
+        public Hacker(ISender<TRequest, TResponse> sender)
         {
             _sender = sender;
 
@@ -23,7 +25,7 @@ namespace BruteForce
             _charsIndexes[0] = 0;
         }
 
-        public void Hack()
+        public TResponse Hack(TRequest request)
         {
             int increaseIndex = 0;
             while (true)
@@ -31,12 +33,13 @@ namespace BruteForce
                 var nextPassword = _charsIndexes.Where(index => index is not null).Select(index => Convert.ToString(_availableChars[index.Value]))
                     .Aggregate((previous, next) => previous + next);
 
-                var response = _sender.Send(nextPassword);
-                if(response is true)
+                request.Password = nextPassword;
+                var response = _sender.Send(request);
+                if(response.Success is true)
                 {
                     ClearConsoleLine();
                     Console.WriteLine($"Пароль найден {nextPassword}");
-                    break;
+                    return response;
                 }
                 else
                 {
