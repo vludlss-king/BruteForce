@@ -71,9 +71,8 @@ namespace BruteForce
             if (allMax)
             {
                 blockCursor++;
-                _passwordBlocks[blockCursor] = 0;
-                for (int i = blockCursor - 1; i >= 0; i--)
-                    _passwordBlocks[i] = 0;
+                for (int currentBlockCursor = blockCursor; currentBlockCursor >= 0; currentBlockCursor--)
+                    _passwordBlocks[currentBlockCursor] = 0;
             }
         }
 
