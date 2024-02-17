@@ -1,4 +1,5 @@
 ﻿using BruteForce.Contracts;
+using BruteForce.Helpers;
 
 namespace BruteForce
 {
@@ -27,29 +28,30 @@ namespace BruteForce
 
         public TResponse Hack(TRequest request)
         {
-            int increaseIndex = 0;
+            int incrementableIndex = 0;
             while (true)
             {
-                var nextPassword = _charsIndexes.Where(index => index is not null).Select(index => Convert.ToString(_availableChars[index.Value]))
-                    .Aggregate((previous, next) => previous + next);
+                var password = GetNextPassword();
 
-                request.Password = nextPassword;
+                request.Password = password;
                 var response = _sender.Send(request);
                 if(response.Success is true)
                 {
-                    ClearConsoleLine();
-                    Console.WriteLine($"Пароль найден {nextPassword}");
+                    Output.WriteLine($"Пароль найден {password}");
                     return response;
                 }
                 else
                 {
-                    Increment(ref increaseIndex);
-
-                    ClearConsoleLine();
-                    Console.Write($"Пароль не найден {nextPassword}");
+                    Output.Write($"Пароль не найден {password}");
+                    Increment(ref incrementableIndex);
                 }
             }
         }
+
+        private string GetNextPassword()
+            => _charsIndexes.Where(index => index is not null)
+                .Select(index => Convert.ToString(_availableChars[index!.Value]))
+                .Aggregate((previous, next) => previous + next);
 
         private void Increment(ref int index)
         {
@@ -87,14 +89,6 @@ namespace BruteForce
                 _charsIndexes[previous]++;
                 ResetPrevious(previous);
             }
-        }
-
-        public void ClearConsoleLine()
-        {
-            int currentLine = Console.CursorTop;
-            Console.SetCursorPosition(0, currentLine);
-            Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, currentLine);
         }
     }
 }
