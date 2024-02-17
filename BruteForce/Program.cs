@@ -40,14 +40,14 @@ namespace BruteForce
                     continue;
                 }
 
-                if (!password.All(@char => char.IsAscii(@char) && char.IsLetterOrDigit(@char)))
+                if (!Helpers.Password.IsValid(password))
                 {
                     Console.WriteLine();
                     Console.Write("Пароль имеет неверный формат, введите ещё раз");
                     continue;
                 }
 
-                if (!string.IsNullOrWhiteSpace(password) && password.All(@char => char.IsAscii(@char) && char.IsLetterOrDigit(@char)))
+                if (!string.IsNullOrWhiteSpace(password) && Helpers.Password.IsValid(password))
                     break;
             } while (true);
             return password;

@@ -8,5 +8,12 @@
                 .Where(char.IsAsciiLetterOrDigit)
                 .ToList()
                 .AsReadOnly();
+
+        public static bool IsValid(string password)
+        {
+            var chars = GetAvailableChars();
+
+            return password.All(@char => chars.Contains(@char));
+        }
     }
 }
