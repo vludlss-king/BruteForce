@@ -23,7 +23,7 @@ namespace BruteForce
             _passwordBlocks[0] = 0;
         }
 
-        public TResponse Hack(TRequest request, CancellationToken token = default)
+        public async Task<TResponse> Hack(TRequest request, CancellationToken token = default)
         {
             int blockCursor = 0;
             while (true)
@@ -33,7 +33,7 @@ namespace BruteForce
                 var password = GetNextPassword();
 
                 request.Password = password;
-                var response = _sender.Send(request);
+                var response = await _sender.Send(request);
                 if(response.Success is true)
                 {
                     _output.WriteLine($"Пароль найден {password}");

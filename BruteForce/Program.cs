@@ -17,8 +17,8 @@ namespace BruteForce
             {
                 Password = ReadPassword();
 
-                var hacker = new Hacker<Request, Response>(new Sender(), new Output());
-                var request = new Request();
+                var hacker = new Hacker<ConsoleRequest, ConsoleResponse>(new ConsoleSender(), new Output());
+                var request = new ConsoleRequest();
                 var result = hacker.Hack(request);
             }
         }

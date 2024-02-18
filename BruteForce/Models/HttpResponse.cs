@@ -2,8 +2,9 @@
 
 namespace BruteForce.Models
 {
-    internal class Request : IPassword
+    internal class HttpResponse : ISuccess, IPassword
     {
+        public bool Success { get; set; }
         public string? Password { get; set; }
     }
 }

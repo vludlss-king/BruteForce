@@ -4,6 +4,6 @@
         where TRequest : IPassword
         where TResponse : ISuccess
     {
-        public TResponse Send(TRequest request);
+        public Task<TResponse> Send(TRequest request);
     }
 }

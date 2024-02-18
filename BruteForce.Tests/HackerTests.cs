@@ -15,20 +15,20 @@ namespace BruteForce.Tests
 
         [Theory]
         [MemberData(nameof(GetAvailableChars))]
-        public void Latin_password_from_available_character_was_hacked(string @char)
+        public async Task Latin_password_from_available_character_was_hacked(string @char)
         {
             // Arrange
             Program.Password = @char;
 
             var outputStub = new Mock<IOutput>();
-            var hacker = new Hacker<Request, Response>(new Sender(), outputStub.Object);
+            var hacker = new Hacker<ConsoleRequest, ConsoleResponse>(new ConsoleSender(), outputStub.Object);
 
-            var request = new Request();
+            var request = new ConsoleRequest();
             var tokenSource = new CancellationTokenSource();
             tokenSource.CancelAfter((int)TimeSpan.FromSeconds(_timeoutInSeconds).TotalMilliseconds);
 
             // Act
-            var result = hacker.Hack(request, tokenSource.Token);
+            var result = await hacker.Hack(request, tokenSource.Token);
 
             // Assert
             result.Success.Should().Be(true);
