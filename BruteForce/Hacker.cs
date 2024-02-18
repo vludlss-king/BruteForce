@@ -3,19 +3,15 @@ using BruteForce.Helpers;
 
 namespace BruteForce
 {
-    internal class Hacker<TRequest, TResponse>
-        where TRequest : IPassword
-        where TResponse : ISuccess, IPassword
+    internal class Hacker
     {
-        private readonly ISender<TRequest, TResponse> _sender;
         private readonly IOutput _output;
 
         private readonly int?[] _passwordBlocks;
         private readonly IReadOnlyList<char> _availableChars;
 
-        public Hacker(ISender<TRequest, TResponse> sender, IOutput output)
+        public Hacker(IOutput output)
         {
-            _sender = sender;
             _output = output;
 
             _availableChars = Password.GetAvailableChars();
@@ -23,7 +19,9 @@ namespace BruteForce
             _passwordBlocks[0] = 0;
         }
 
-        public async Task<TResponse> Hack(TRequest request, CancellationToken token = default)
+        public async Task<TResponse> Hack<TRequest, TResponse>(ISender<TRequest, TResponse> sender, TRequest request, CancellationToken token = default)
+            where TRequest : IPassword
+            where TResponse : ISuccess, IPassword
         {
             int blockCursor = 0;
             while (true)
@@ -33,7 +31,7 @@ namespace BruteForce
                 var password = GetNextPassword();
 
                 request.Password = password;
-                var response = await _sender.Send(request);
+                var response = await sender.Send(request);
                 if(response.Success is true)
                 {
                     _output.WriteLine($"Пароль найден {password}");

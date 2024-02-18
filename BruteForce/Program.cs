@@ -1,6 +1,9 @@
-﻿using BruteForce.Helpers;
+﻿using BruteForce.Contracts;
+using BruteForce.Enums;
+using BruteForce.Helpers;
 using BruteForce.Impl;
 using BruteForce.Models;
+using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -11,35 +14,28 @@ namespace BruteForce
     internal class Program
     {
         public static string Password = string.Empty;
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            while (true)
-            {
-                Password = ReadPassword();
+            var provider = BuildServiceProvider();
+            var app = provider.GetRequiredService<Application>();
 
-                var hacker = new Hacker<ConsoleRequest, ConsoleResponse>(new ConsoleSender(), new Output());
-                var request = new ConsoleRequest();
-                var result = hacker.Hack(request);
-            }
+            Console.WriteLine("Введите 0, чтобы взломать консоль");
+            Console.WriteLine("Введите 1, чтобы взломать Api");
+            var input = Enum.Parse<HackType>(Console.ReadLine()!);
+            await app.Run(input);
         }
 
-        private static string ReadPassword()
+        private static IServiceProvider BuildServiceProvider()
         {
-            var password = string.Empty;
-            do
-            {
-                Console.Write("Введите ваш пароль: ");
-                password = Console.ReadLine();
+            var services = new ServiceCollection();
 
-                if (!Helpers.Password.IsValid(password))
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("Пароль имеет неверный формат, введите ещё раз");
-                    continue;
-                }
-                else break;
-            } while (true);
-            return password;
+            services.AddSingleton<Application>();
+            services.AddSingleton<Hacker>();
+            services.AddSingleton<IOutput, Output>();
+            services.AddSingleton<ISender<HttpRequest, HttpResponse>, HttpSender>();
+            services.AddSingleton<ISender<ConsoleRequest, ConsoleResponse>, ConsoleSender>();
+
+            return services.BuildServiceProvider();
         }
     }
 }
