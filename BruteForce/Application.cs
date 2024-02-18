@@ -1,7 +1,9 @@
 ﻿using BruteForce.Contracts;
 using BruteForce.Enums;
 using BruteForce.Helpers;
+using BruteForce.HttpClients;
 using BruteForce.Models;
+using Newtonsoft.Json;
 
 namespace BruteForce
 {
@@ -10,12 +12,17 @@ namespace BruteForce
         private readonly Hacker _hacker;
         private readonly ISender<HttpRequest, HttpResponse> _httpSender;
         private readonly ISender<ConsoleRequest, ConsoleResponse> _consoleSender;
+        private readonly IApiHttpClient _apiHttpClient;
 
-        public Application(Hacker hacker, ISender<HttpRequest, HttpResponse> httpSender, ISender<ConsoleRequest, ConsoleResponse> consoleSender)
+        public Application(Hacker hacker,
+            ISender<HttpRequest, HttpResponse> httpSender,
+            ISender<ConsoleRequest, ConsoleResponse> consoleSender,
+            IApiHttpClient apiHttpClient)
         {
             _hacker = hacker;
             _httpSender = httpSender;
             _consoleSender = consoleSender;
+            _apiHttpClient = apiHttpClient;
         }
 
         public async Task Run(HackType hackType)
@@ -29,7 +36,14 @@ namespace BruteForce
                             Login = "petya"
                         };
                         var result = await _hacker.Hack(_httpSender, request);
-                        Console.ReadLine();
+
+                        if (result.Success)
+                        {
+                            var response = await _apiHttpClient.GetPassportData();
+                        
+                            Console.WriteLine($"Вы успешно вошли в аккаунт! Вот паспортные данные пользователя: {JsonConvert.SerializeObject(response.Content)}");
+                            Console.ReadLine();
+                        }
                         break;
                     }
                 case HackType.Console:
