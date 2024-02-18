@@ -5,8 +5,8 @@ using BruteForce.Models;
 
 namespace BruteForce.Tests
 {
-    [Collection(nameof(HackerTests))]
-    public class HackerTests
+    [Collection(nameof(HackerConsoleSenderTests))]
+    public class HackerConsoleSenderTests
     {
         const int _timeoutInSeconds = 5;
 
@@ -21,14 +21,14 @@ namespace BruteForce.Tests
             Program.Password = @char;
 
             var outputStub = new Mock<IOutput>();
-            var hacker = new Hacker<ConsoleRequest, ConsoleResponse>(new ConsoleSender(), outputStub.Object);
-
+            var hacker = new Hacker(outputStub.Object);
+            var consoleSender = new ConsoleSender();
             var request = new ConsoleRequest();
             var tokenSource = new CancellationTokenSource();
             tokenSource.CancelAfter((int)TimeSpan.FromSeconds(_timeoutInSeconds).TotalMilliseconds);
 
             // Act
-            var result = await hacker.Hack(request, tokenSource.Token);
+            var result = await hacker.Hack(consoleSender, request, tokenSource.Token);
 
             // Assert
             result.Success.Should().Be(true);
@@ -36,7 +36,7 @@ namespace BruteForce.Tests
         }
     }
 
-    [CollectionDefinition(nameof(HackerTests), DisableParallelization = false)]
+    [CollectionDefinition(nameof(HackerConsoleSenderTests), DisableParallelization = false)]
     public class HackerTestsCollection
     {
 
