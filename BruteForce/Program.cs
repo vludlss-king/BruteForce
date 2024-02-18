@@ -1,9 +1,11 @@
 ﻿using BruteForce.Contracts;
 using BruteForce.Enums;
 using BruteForce.Helpers;
+using BruteForce.HttpClients;
 using BruteForce.Impl;
 using BruteForce.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Refit;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -28,6 +30,12 @@ namespace BruteForce
         private static IServiceProvider BuildServiceProvider()
         {
             var services = new ServiceCollection();
+
+            services.AddRefitClient<IApiHttpClient>()
+                .ConfigureHttpClient(c =>
+                {
+                    c.BaseAddress = new Uri("https://localhost:7250");
+                });
 
             services.AddSingleton<Application>();
             services.AddSingleton<Hacker>();

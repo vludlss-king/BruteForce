@@ -1,4 +1,5 @@
 ﻿using BruteForce.Contracts;
+using BruteForce.HttpClients;
 using BruteForce.Models;
 using Newtonsoft.Json;
 using System.Net.Mime;
@@ -8,16 +9,18 @@ namespace BruteForce.Impl
 {
     internal class HttpSender : ISender<HttpRequest, HttpResponse>
     {
+        public readonly IApiHttpClient _apiHttpClient;
+
+        public HttpSender(IApiHttpClient apiHttpClient)
+        {
+            _apiHttpClient = apiHttpClient;    
+        }
+
         public async Task<HttpResponse> Send(HttpRequest request)
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:7250");
+            var response = await _apiHttpClient.SignIn(request);
 
-            var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, MediaTypeNames.Application.Json);
-            var response = await client.PostAsync("Auth/signIn", requestContent);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            if (responseContent == "Вы вошли в аккаунт!")
+            if (response.Content == "Вы вошли в аккаунт!")
                 return new HttpResponse { Success = true };
 
             return new HttpResponse { Success = false };
